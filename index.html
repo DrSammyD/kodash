@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Kodash by DrSammyD</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Kodash</h1>
+        <p>Knockout dependency detection in chained lodash calls.</p>
+
+        <p class="view"><a href="https://github.com/DrSammyD/kodash">View the Project on GitHub <small>DrSammyD/kodash</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/DrSammyD/kodash/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/DrSammyD/kodash/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/DrSammyD/kodash">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="kodash" class="anchor" href="#kodash"><span class="octicon octicon-link"></span></a>kodash</h1>
+
+<p>Knockout dependency detection in chained lodash (soon to be underscore as well) calls.</p>
+
+<p>I simple extension of KnockoutJS which allows you to call lodash functions on observables.</p>
+
+<h1>
+<a name="getting-the-value-from-the-wrapper" class="anchor" href="#getting-the-value-from-the-wrapper"><span class="octicon octicon-link"></span></a>Getting the value from the wrapper</h1>
+
+<pre><code>var x = ko.observable([1,2,0,0,3,4,5]);
+x._().filter().value();
+</code></pre>
+
+<p>The above code will output [1,2,3,4,5]</p>
+
+<p>Mutating
+Now let's say you want to mutate your observable
+with the current value of your lodash calls</p>
+
+<pre><code>var x = ko.observable([1,2,0,0,3,4,5]);
+x._().filter().mutap();
+x();
+</code></pre>
+
+<p>The above code will output [1,2,3,4,5]</p>
+
+<h1>
+<a name="making-observables" class="anchor" href="#making-observables"><span class="octicon octicon-link"></span></a>Making observables</h1>
+
+<pre><code>var x = ko.observable([1,2,0,0,3,4,5]);
+var y = x._().filter().observe();
+x([1,2,0,0,3]);
+y();
+</code></pre>
+
+<p>The above code will output [1,2,3]</p>
+
+<h1>
+<a name="chaining-dependencies" class="anchor" href="#chaining-dependencies"><span class="octicon octicon-link"></span></a>Chaining dependencies</h1>
+
+<pre><code>var x = ko.observable([1,2,3,4,5]);
+var y = ko.observable([1]);
+var z=x._().difference(y).observe();
+z();
+</code></pre>
+
+<p>The above code will output [2,3,4,5],
+but with another call</p>
+
+<pre><code>y([1,2]);
+z()
+</code></pre>
+
+<p>it will now output [3,4,5]</p>
+
+<p>One thing to note. Lodash unwraps it's observables on certain calls. If you expect lodash to do this for one of your calls, simply perform the following</p>
+
+<pre><code>var x= ko.observable([[1,2,0], 3]);
+x.first()._().filter().value();
+</code></pre>
+
+<p>The above code will output [1,2]</p>
+
+<p>Calling _() in your chain will rewrap the value so that it can continue to be chained. Any lodash functions called without a rewrap will be skipped.</p>
+
+<pre><code>var x= ko.observable([[1,2,0], 3]);
+x.first().filter().value();
+</code></pre>
+
+<p>The above code will output [1,2,0]</p>
+
+<p>Checkout this <a href="http://jsfiddle.net/FZek4/153/">jsfiddle</a> for more intersting behavior</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/DrSammyD">DrSammyD</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
