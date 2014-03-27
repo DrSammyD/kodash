@@ -1,0 +1,22 @@
+{
+    "name": "kodash",
+    "version": "1.0.0",
+    "main": "javascripts/kodash.js",
+    "ignore": [
+        "source",
+        "spec",
+        ".bowerrc",
+        ".gitignore",
+        ".gitattributes",
+        ".jshintignore",
+        ".jshintrc",
+        "bower.json",
+        "gruntfile.js",
+        "package.json",
+        "README.md"
+    ],
+    "dependencies": {
+        "knockout": ">=2.2.0",
+        "lodash": ">=2.2.0"
+    }
+}
