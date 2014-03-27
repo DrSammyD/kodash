@@ -1,7 +1,7 @@
 kodash
 ======
 
-Knockout dependency detection in chained lodash or underscore calls.
+Knockout dependency detection in chained lodash (soon to be underscore as well) calls.
 
 I simple extension of KnockoutJS which allows you to call lodash functions on observables.
 
