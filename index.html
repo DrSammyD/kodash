@@ -44,12 +44,14 @@ x._().filter().value();
 
 <p>The above code will output [1,2,3,4,5]</p>
 
-<p>Mutating
-Now let's say you want to mutate your observable
+<h1>
+<a name="mutating" class="anchor" href="#mutating"><span class="octicon octicon-link"></span></a>Mutating</h1>
+
+<p>Now let's say you want to mutate your observable
 with the current value of your lodash calls</p>
 
 <pre><code>var x = ko.observable([1,2,0,0,3,4,5]);
-x._().filter().mutap();
+x._().filter().mutate();
 x();
 </code></pre>
 
