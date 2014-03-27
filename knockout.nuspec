@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<package> 
+  <metadata> 
+    <id>kodash</id> 
+    <version>1.0.0</version>
+    <authors>Sam Armstrong</authors>
+    <description>Knockout dependency detection in chained lodash calls</description> 
+    <language>en-US</language>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>http://knockoutjs.com/</projectUrl>
+    <tags>knockout lodash</tags>
+  </metadata> 
+  <files>
+    <file src="javascripts\*.*" target="Content\Scripts\" />
+  </files>  
+</package>
