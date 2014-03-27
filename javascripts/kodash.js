@@ -57,7 +57,7 @@
             }
             return this;
         };
-    var mutap = function () {
+    var mutate = function () {
             if (ko.isWriteableObservable(this.__observable__)) {
                 var loVal = this.wrappedValueOf();
                 this.__funcs__ = [];
@@ -111,7 +111,7 @@
     _.mixin(kodashWrapper.prototype, {
         _: rewrap,
         rewrap: rewrap,
-        mutap: mutap,
+        mutate: mutate,
         wrappedValueOf: wrappedValueOf,
         wrappedValue: wrappedValueOf,
         valueOf: valueOf,
