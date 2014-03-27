@@ -16,12 +16,13 @@ The above code will output [1,2,3,4,5]
 
 
 Mutating
+========
 Now let's say you want to mutate your observable
 with the current value of your lodash calls
 
 ```
 var x = ko.observable([1,2,0,0,3,4,5]);
-x._().filter().mutap();
+x._().filter().mutate();
 x();
 ```
 The above code will output [1,2,3,4,5]
