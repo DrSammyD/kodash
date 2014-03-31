@@ -71,4 +71,4 @@ The above code will output [1,2,0]
 
 
 
-Checkout this [jsfiddle](http://jsfiddle.net/FZek4/153/) for more intersting behavior
+Checkout this [jsfiddle](http://jsfiddle.net/FZek4/154/) for more intersting behavior
