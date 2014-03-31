@@ -3,7 +3,7 @@ kodash
 
 Knockout dependency detection in chained lodash (soon to be underscore as well) calls.
 
-I simple extension of KnockoutJS which allows you to call lodash functions on observableArrays and observables.
+It's a simple extension of KnockoutJS which allows you to call lodash functions on observableArrays and observables.
 
 
 Getting the value from the wrapper
@@ -50,7 +50,7 @@ The above code will output [2,3,4,5],
 but with another call
 ```
 y([1,2]);
-z()
+z();
 ```
 it will now output [3,4,5]
 
