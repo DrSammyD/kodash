@@ -11,8 +11,8 @@
     <projectUrl>http://drsammyd.github.io/kodash</projectUrl>
     <tags>knockout lodash</tags>
     <dependencies>
-      <dependency id="knockoutjs" version="2.2.0" />
-      <dependency id="lodash" version="2.2.0" />
+      <dependency id="knockoutjs" version="2.3.0" />
+      <dependency id="lodash" version="2.4.0" />
     </dependencies>
   </metadata> 
   <files>

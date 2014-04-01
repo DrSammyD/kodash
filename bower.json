@@ -16,7 +16,7 @@
         "README.md"
     ],
     "dependencies": {
-        "knockout": ">=2.2.0",
-        "lodash": ">=2.2.0"
+        "knockout": ">=2.3.0",
+        "lodash": ">=2.4.0"
     }
 }
