@@ -10,7 +10,8 @@ Getting the value from the wrapper
 ==================================
 ```
 var x = ko.observableArray([1,2,0,0,3,4,5]);
-x._().filter().value(); //=> [1,2,3,4,5]
+x._().filter().value();
+//=> [1,2,3,4,5]
 ```
 
 
