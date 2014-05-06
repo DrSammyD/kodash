@@ -39,10 +39,8 @@
 <a name="getting-the-value-from-the-wrapper" class="anchor" href="#getting-the-value-from-the-wrapper"><span class="octicon octicon-link"></span></a>Getting the value from the wrapper</h1>
 
 <pre><code>var x = ko.observableArray([1,2,0,0,3,4,5]);
-x._().filter().value();
+x._().filter().value(); //=&gt; [1,2,3,4,5]
 </code></pre>
-
-<p>The above code will output [1,2,3,4,5]</p>
 
 <h1>
 <a name="mutating" class="anchor" href="#mutating"><span class="octicon octicon-link"></span></a>Mutating</h1>
@@ -53,9 +51,8 @@ with the current value of your lodash calls</p>
 <pre><code>var x = ko.observableArray([1,2,0,0,3,4,5]);
 x._().filter().mutate();
 x();
+//=&gt;[1,2,3,4,5]
 </code></pre>
-
-<p>The above code will output [1,2,3,4,5]</p>
 
 <h1>
 <a name="making-observablearrays" class="anchor" href="#making-observablearrays"><span class="octicon octicon-link"></span></a>Making observableArrays</h1>
@@ -64,9 +61,8 @@ x();
 var y = x._().filter().observe();
 x([1,2,0,0,3]);
 y();
+//=&gt;[1,2,3]
 </code></pre>
-
-<p>The above code will output [1,2,3]</p>
 
 <h1>
 <a name="chaining-dependencies" class="anchor" href="#chaining-dependencies"><span class="octicon octicon-link"></span></a>Chaining dependencies</h1>
@@ -75,32 +71,29 @@ y();
 var y = ko.observableArray([1]);
 var z=x._().difference(y).observe();
 z();
+//=&gt;[2,3,4,5]
 </code></pre>
 
-<p>The above code will output [2,3,4,5],
-but with another call</p>
+<p>But with another call</p>
 
 <pre><code>y([1,2]);
 z();
+//=&gt;[3,4,5]
 </code></pre>
-
-<p>it will now output [3,4,5]</p>
 
 <p>One thing to note. Lodash unwraps it's observableArrays on certain calls. If you expect lodash to do this for one of your calls, simply perform the following</p>
 
 <pre><code>var x= ko.observableArray([[1,2,0], 3]);
 x.first()._().filter().value();
+//=&gt;[1,2]
 </code></pre>
-
-<p>The above code will output [1,2]</p>
 
 <p>Calling _() in your chain will rewrap the value so that it can continue to be chained. Any lodash functions called without a rewrap will be skipped.</p>
 
 <pre><code>var x= ko.observableArray([[1,2,0], 3]);
 x.first().filter().value();
+//=&gt;[1,2,0]
 </code></pre>
-
-<p>The above code will output [1,2,0]</p>
 
 <p>Checkout this <a href="http://jsfiddle.net/FZek4/154/">jsfiddle</a> for more intersting behavior</p>
       </section>
