@@ -109,7 +109,8 @@
             return lodashCalls
         };
     var valueOf = function () {
-            return this.wrappedValueOf().valueOf();
+            var val=this.wrappedValueOf();
+            return val && val.valueOf();
         };
     var observe = function () {
             var result = [];
