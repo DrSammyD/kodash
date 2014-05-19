@@ -50,6 +50,26 @@
         }
     }).value());
 
+    var mixinOrig = _.mixin;
+    _.mixin({
+        mixin: function () {
+            var premixin = _.keys(_.prototype);
+            mixinOrig.apply(this, arguments);
+            _(_.prototype).keys().difference(premixin).tap(function(arr) {
+                if (arr.length) {
+                    mixinOrig(kodashWrapper.prototype, _(arr).object().mapValues(function (val, key) {
+                        return function () {
+                            var wrapper = new kodashWrapper(this.__observable__)
+                            wrapper.__funcs__ = wrapper.__funcs__.concat(this.__funcs__);
+                            kodashPushFunction(wrapper, key, arguments);
+                            return wrapper;
+                        }
+                    }).value())
+                }
+            })
+        }
+    });
+    
     var rewrap=function(){
             lastFunc = _.last(this.__funcs__);
             if(lastFunc){
