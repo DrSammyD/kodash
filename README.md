@@ -53,7 +53,7 @@ z();
 //=>[3,4,5]
 ```
 
-One thing to note. Lodash unwraps it's observableArrays on certain calls. If you expect lodash to do this for one of your calls, simply perform the following
+One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If you expect lodash to do this for one of your calls, simply perform the following
 
 ```
 var x= ko.observableArray([[1,2,0], 3]);
