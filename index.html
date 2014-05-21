@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -15,17 +16,18 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Kodash</h1>
-        <p>Knockout dependency detection in chained lodash calls.</p>
-
-        <p class="view"><a href="https://github.com/DrSammyD/kodash">View the Project on GitHub <small>DrSammyD/kodash</small></a></p>
-
+        <h1 class="header">Kodash</h1>
+        <p class="header">Knockout dependency detection in chained lodash calls.</p>
 
         <ul>
-          <li><a href="https://github.com/DrSammyD/kodash/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/DrSammyD/kodash/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/DrSammyD/kodash">View On <strong>GitHub</strong></a></li>
+          <li class="download"><a class="buttons" href="https://github.com/DrSammyD/kodash/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/DrSammyD/kodash/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/DrSammyD/kodash">View On GitHub</a></li>
         </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/DrSammyD">DrSammyD</a></p>
+
+
       </header>
       <section>
         <h1>
@@ -82,7 +84,7 @@ z();
 //=&gt;[3,4,5]
 </code></pre>
 
-<p>One thing to note. Lodash unwraps it's observableArrays on certain calls. If you expect lodash to do this for one of your calls, simply perform the following</p>
+<p>One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If you expect lodash to do this for one of your calls, simply perform the following</p>
 
 <pre><code>var x= ko.observableArray([[1,2,0], 3]);
 x.first()._().filter().value();
@@ -99,11 +101,10 @@ x.first().filter().value();
 <p>Checkout this <a href="http://jsfiddle.net/FZek4/154/">jsfiddle</a> for more intersting behavior</p>
       </section>
       <footer>
-        <p>This project is maintained by <a href="https://github.com/DrSammyD">DrSammyD</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+        <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
   </body>
 </html>
