@@ -57,14 +57,14 @@ One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If 
 
 ```
 var x= ko.observableArray([[1,2,0], 3]);
-x.first()._().filter().value();
+x._().first()._().filter().value();
 //=>[1,2]
 ```
 
 Calling _() in your chain will rewrap the value so that it can continue to be chained. Any lodash functions called without a rewrap will be skipped.
 ```
 var x= ko.observableArray([[1,2,0], 3]);
-x.first().filter().value();
+x._().first().filter().value();
 //=>[1,2,0]
 ```
 
