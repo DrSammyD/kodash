@@ -112,7 +112,7 @@
             var val=this.wrappedValueOf();
             return val && val.valueOf();
         };
-    var observe = function () {
+    var observe = function (opts) {
             var result = [];
             _(this.__funcs__).each(function (item, index) {
                 var lastgroup = result.length ? _.last(result).group : 0;
@@ -125,7 +125,7 @@
             
             var computed = baseObservable = this.__observable__;
             _(result).groupBy('group').each(function (group) {
-                computed = createComputedGroup(group, computed, baseObservable);
+                computed = createComputedGroup(group, computed, baseObservable,opts);
             });
             return createUnwrappedComputed(computed);
         }
@@ -146,24 +146,26 @@
         else
             return observable;
     }
-    function createComputedGroup(group, observable, baseObservable) {
+    function createComputedGroup(group, observable, baseObservable, opts) {
+        opts = opts||{}
         var funcs = _(group).pluck('func')
         var last =funcs.last();
         if(last.comp){
             return last.comp
         }
-        return last.comp = ko.computed(function () {
+        opts.read = function () {
             var lodashCalls = ko.unwrap(observable);
-            lodashCalls= (observable === baseObservable)? _(lodashCalls) : lodashCalls
+            lodashCalls = (observable === baseObservable) ? _(lodashCalls) : lodashCalls
             _(funcs).each(function (func) {
                 if (isLodash(lodashCalls)) {
                     var args = unwrapArgs(func['args'])
                     lodashCalls = lodashCalls[func['loFunc']].apply(lodashCalls, args);
-                    lodashCalls = func.rewrap? _(lodashCalls) : lodashCalls;
+                    lodashCalls = func.rewrap ? _(lodashCalls) : lodashCalls;
                 }
             });
-            return lodashCalls;
-        })
+            return ko.unwrap(lodashCalls);
+        }
+        return last.comp = ko.computed(opts)
     };
     ko.observable['fn']['_'] = ko.observable['fn']['kodash'] = function () {
         return new kodashWrapper(this)
