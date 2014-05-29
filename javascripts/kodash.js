@@ -6,8 +6,9 @@
         factory(ko,_);
     }
 })(function (ko, _) {
+    var hasOwn = Object.prototype.hasOwnProperty
     function isLodash(lodashCalls) {
-        return lodashCalls && typeof lodashCalls == 'object' && !_.isArray(lodashCalls) && hasOwnProperty.call(lodashCalls, '__wrapped__')
+        return lodashCalls && typeof lodashCalls == 'object' && !_.isArray(lodashCalls) && hasOwn.call(lodashCalls, '__wrapped__')
     };
 
     function kodashWrapper(obs) {
@@ -167,7 +168,7 @@
         }
         return last.comp = ko.computed(opts)
     };
-    ko.observable['fn']['_'] = ko.observable['fn']['kodash'] = function () {
+    ko.observable['fn']['_'] = ko.observable['fn']['kodash'] = ko.dependentObservable['fn']['_'] = ko.dependentObservable['fn']['kodash'] = function () {
         return new kodashWrapper(this)
-    }
+    };
 });
