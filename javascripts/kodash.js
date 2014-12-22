@@ -7,8 +7,23 @@
     }
 })(function(ko, _) {
 
-    var DETECTED = {};
-    var hasOwn = Object.prototype.hasOwnProperty;
+    // taken from https://github.com/mbest/knockout-deferred-updates/blob/master/knockout-deferred-updates.js#L248
+    function findNameMethodSignatureContaining(obj, match) {
+        for (var a in obj)
+            if (obj.hasOwnProperty(a) && obj[a] && obj[a].toString().indexOf(match) >= 0)
+                return a;
+    }
+    function findSubObjectWithProperty(obj, prop) {
+        for (var a in obj)
+            if (obj.hasOwnProperty(a) && obj[a] && obj[a][prop])
+                return obj[a];
+    }
+    var depDet = findSubObjectWithProperty(ko, 'end'),
+    depDetBeginName = findNameMethodSignatureContaining(depDet, '.push'),
+    // end coppied code
+
+    DETECTED = {},
+    hasOwn = Object.prototype.hasOwnProperty;
 
     function isLodash(lodashCalls) {
         return lodashCalls && typeof lodashCalls === 'object' && !_.isArray(lodashCalls) && hasOwn.call(lodashCalls, '__wrapped__');
@@ -25,23 +40,30 @@
             };
     }
 
-    function getKeyFromLength(length) {       
+    function getKeyFromLength(length) {
         var chars = "";
-        for (var i = Math.floor(length / 65536) + 1; i > 0; i--) {
-            chars += String.fromCharCode((length + 45) % (65581));
+        var rem;
+        while (~length) {
+            chars += String.fromCharCode((rem=(length % 65536))+ 45);
+            length-=rem;
+            length = length?length/65536:-1;
         }
         return chars;
+    }
+    function getIndexFromKey(key)
+    {
+        var index = 0;
+        var currentChar = 0;
+        while(currentChar < key.length){
+            index+=Math.pow(65536,currentChar)*(key.charCodeAt(currentChar)-45);
+            currentChar++;
+        }
+        return index;
     }
     function resolveIndexFromPaths(path,current){
         var next = path.slice(current.length+1);
         next = next.slice(0,~next.indexOf(',')?next.indexOf(','):next.length);
-        var index = 0;
-        var currentChar = 0;
-        while(currentChar < next.length){
-            index+=Math.pow(65536,currentChar)*(next.charCodeAt(currentChar)-45);
-            currentChar++;
-        }
-        return index;
+        return getIndexFromKey(next);
     }
     kodashWrapper['fn'] = kodashWrapper['prototype'];
     var kodashPushFunction = function(wrapper, loFunc, args, current) {
@@ -222,10 +244,10 @@
             setRoot = false;
 
         _(func.children).each(function(child) {
-            ko.dependencyDetection.begin({
+            var traverse = true;
+            depDet[depDetBeginName]({
                 callback: cb
             });
-            var traverse = true;
             try {
                 if ('observe' === child['loFunc']) {
                     setRoot = true;
@@ -253,7 +275,7 @@
                 else
                     child.dep(retObs);
             }
-            ko.dependencyDetection.end();
+            ko.computedContext.end();
             traverse && traverseTree(child, ret, lodashCalls, retObs, create, remove);
         });
         if(setRoot){
