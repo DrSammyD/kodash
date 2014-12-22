@@ -1,7 +1,21 @@
 {
     "name": "kodash",
     "version": "1.1.0",
-    "main": "javascripts/kodash.js",
+    "moduleType": [
+        "amd"
+    ],
+    "main": [
+        "javascripts/kodash.js",
+        "javascripts/kodash.min.js"
+    ],
+    "keywords": [
+        "knockout",
+        "lodash",
+        "functional"
+    ],
+    "authors": [
+        "Sam Armstrong"
+    ],
     "ignore": [
         "source",
         "spec",

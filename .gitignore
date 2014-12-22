@@ -1,1 +1,5 @@
-*.nupkg
+node_modules
+_SpecRunner.html
+nuget/*.nupkg
+.grunt
+npm-debug.log

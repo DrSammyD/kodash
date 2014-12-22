@@ -1,0 +1,43 @@
+{
+  "name": "backbone-hypermedia",
+  "description": "Backbone plugin providing support for following hypermedia controls from Backbone models and collections.",
+  "url": "https://github.com/linn/backbone.hypermedia",
+  "keywords": [
+    "backbone",
+    "hypermedia",
+    "REST"
+  ],
+  "author": {
+    "name": "Sam Armstrong",
+    "url": "https://github.com/DrSammyD"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "dependencies": {
+      "knockout": ">=2.3.0",
+      "lodash": ">=2.4.0",
+      "knockout-deferred-updates": "~3.2.1"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-cli": "~0.1.13",
+    "grunt-contrib-jasmine": "~0.5.3",
+    "grunt-template-jasmine-requirejs": "~0.1.10",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-nuget": "~0.1.2",
+    "grunt-shell": "^0.6.4",
+    "grunt-release": "^0.7.0",
+    "grunt-bump": "0.0.13",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-uglify": "^0.6.0"
+  },
+  "main": "javascripts/kodash.js",
+  "version": "0.4.3",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DrSammyD/kodash"
+  }
+}
