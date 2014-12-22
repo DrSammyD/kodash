@@ -1,6 +1,6 @@
 {
     "name": "kodash",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "main": "javascripts/kodash.js",
     "ignore": [
         "source",
@@ -17,6 +17,7 @@
     ],
     "dependencies": {
         "knockout": ">=2.3.0",
-        "lodash": ">=2.4.0"
+        "lodash": ">=2.4.0",
+        "knockout-deferred-updates": "~3.2.1"
     }
 }

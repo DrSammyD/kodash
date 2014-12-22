@@ -1,7 +1,7 @@
 (function(factory) {
     'use strict';
     if (typeof define === 'function' && define.amd) {
-        define(['knockout', 'lodash'], factory);
+        define(['knockout', 'lodash','knockout-deferred-updates'], factory);
     } else {
         factory(ko, _);
     }

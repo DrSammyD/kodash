@@ -3,7 +3,7 @@
   <metadata>
     <title>kodash</title> 
     <id>kodash</id> 
-    <version>1.0.3</version>
+    <version>1.1.0</version>
     <authors>Sam Armstrong</authors>
     <description>Knockout dependency detection in chained lodash calls</description> 
     <language>en-US</language>
@@ -13,6 +13,7 @@
     <dependencies>
       <dependency id="knockoutjs" version="2.3.0" />
       <dependency id="lodash" version="2.4.0" />
+      <dependency id="Knockout.DeferredUpdates" version="3.2.1"></dependency>
     </dependencies>
   </metadata> 
   <files>
