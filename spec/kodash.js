@@ -1,3 +1,4 @@
+
 define(['knockout','lodash','kodash'],function (ko,_){
     describe('kodash', function () {
         var baseArr;
@@ -16,6 +17,65 @@ define(['knockout','lodash','kodash'],function (ko,_){
             it('should fetch the model', function () { 
                 expect(wrapper.constructor.name).toBe('kodashWrapper');
             });
+        });
+
+        describe('when filter is called with no dependencies',function(){
+            var filterCallBackCount;
+            var wrapper;
+            beforeEach(function () {
+                wrapper = baseArr._();
+                filterCallBackCount=0;
+                wrapper.filter(function(item){filterCallBackCount++; return item%2; });
+            });
+
+            it('should not run filter',function(){
+                expect(filterCallBackCount).toBe(0);
+            });
+
+            describe('when value is called on filter',function(){
+
+                beforeEach(function () {
+                    filterCallBackCount=0;
+                    wrapper.filter(function(item){filterCallBackCount++; return item%2; }).value();
+                });
+
+                it('should run filter callback',function(){
+                    expect(filterCallBackCount).toBe(8);
+                });
+            });
+            describe('when observe is called on filter',function(){
+                var filteredObservable;
+                beforeEach(function () {
+                    baseArr([1,2,3,4,5,6,7,8]);
+                    filterCallBackCount=0;
+                    filteredObservable = wrapper.filter(function(item){filterCallBackCount++; return item%2; }).observe();
+                });
+
+                it('should run filter callback',function(){
+                    expect(filterCallBackCount).toBe(8);
+                });
+                it('should return observable',function(){
+                    var arr=filteredObservable();
+                    expect(arr).toContain(1);
+                    expect(arr).not.toContain(2);
+                    expect(arr).toContain(3);
+                });
+                describe('when base observable is changed',function(){
+                    beforeEach(function () {
+                        baseArr([1,2]);
+                    });
+
+                    it('should run filter callback',function(){
+                        expect(filterCallBackCount).toBe(10);
+                    });
+                    it('should update observable',function(){
+                        var arr=filteredObservable();
+                        expect(arr).toContain(1);
+                        expect(arr).not.toContain(2);
+                        expect(arr).not.toContain(3);
+                    });
+                });
+            });            
         });
 /*
         describe('when follow is called with no links', function () {

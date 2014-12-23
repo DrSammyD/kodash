@@ -1,7 +1,7 @@
 (function(factory) {
     'use strict';
     if (typeof define === 'function' && define.amd) {
-        define(['knockout', 'lodash','knockout-deferred-updates'], factory);
+        define(['knockout', 'lodash'], factory);
     } else {
         factory(ko, _);
     }
@@ -186,15 +186,28 @@
         observeValueOf: observe
     });
 
-    function createUnwrappedComputed(func) {
+    function createUnwrappedComputed(startFunc) {
+        var func = startFunc;
+        while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
+                if (func.dep) 
+                    depsToRemove.push(func);
+                func = func.parent;
+            }
+        func=func.parent;
+        while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
+                if (func.dep) 
+                    depsToRemove.push(func);
+                func = func.parent;
+            }
         return ko.computed(function() {
-            return ko.unwrap(ko.unwrap(func.dep))[func.root.slice(0, -2)].value();
+            return ko.unwrap(ko.unwrap(startFunc.dep))[startFunc.root.slice(0, -2)].value();
         });
     }
 
     function createComputedGroup(startFunc, opts) {
         opts = ko.utils.extend(opts || {});
         var retObs = ko.observable();
+        setStartFunc=_.once(function(func){startFunc=func});
         opts.read = function() {
             var ret = {},
                 depsToRemove = [],
@@ -206,6 +219,7 @@
                     depsToRemove.push(func);
                 func = func.parent;
             }
+            setStartFunc(func);
             ko.unwrap(ko.unwrap(func.dep));
             lodashCalls = ko.unwrap(func.parent['__observable__']);
             lodashCalls = lodashCalls[func.root.slice(0, -2)];
@@ -218,7 +232,7 @@
                 var args = unwrapArgs(func['args']);
                 lodashCalls = lodashCalls[func['loFunc']].apply(lodashCalls, args);
                 lodashCalls = func.rewrap ? _(lodashCalls) : lodashCalls;
-                ko.isObservable(func.__observable__)? func.__observable__(lodashCalls): func.__observable__=lodashCalls;
+                ko.isObservable(func.__observable__)? func.__observable__()[func.root]=lodashCalls: func.__observable__=lodashCalls;
             }
             traverseTree(func, ret, lodashCalls, retObs, create, depsToRemove);
 

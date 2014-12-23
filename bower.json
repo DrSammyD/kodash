@@ -31,7 +31,6 @@
     ],
     "dependencies": {
         "knockout": ">=2.3.0",
-        "lodash": ">=2.4.0",
-        "knockout-deferred-updates": "~3.2.1"
+        "lodash": ">=2.4.0"
     }
 }
