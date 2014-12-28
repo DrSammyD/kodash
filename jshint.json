@@ -1,0 +1,6 @@
+{
+    "boss":true,
+    "sub":true,
+    "eqeqeq": false,
+    "expr":true
+}

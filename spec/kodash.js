@@ -1,101 +1,185 @@
 define(['knockout', 'lodash', 'kodash'], function(ko, _) {
-    describe('kodash arrays', function() {
-        var numArray;
+    describe('kodash', function() {
+        var oArr;
         beforeEach(function() {
-            numArray = ko.observableArray([1, 2, 3, 4, 5, 6, 7, 8]);
+            oArr = ko.observableArray([1, 2, 3, 4, 5, 6, 7, 8]);
         });
         describe('when wrap is called', function() {
-            var wrapper;
+            var kw;
             beforeEach(function() {
-                wrapper = numArray._();
+                kw = oArr._();
             });
 
             it('should fetch the model', function() {
-                expect(wrapper.constructor.name).toBe('kodashWrapper');
+                expect(kw.constructor.name).toBe('kodashWrapper');
             });
         });
         describe('when filter is called with no dependencies', function() {
-            var filterCallBackCount, wrapper;
+            var fcc, kw;
             beforeEach(function() {
-                wrapper = numArray._();
-                filterCallBackCount = 0;
-                wrapper.filter(function(item) {
-                    filterCallBackCount++;
+                kw = oArr._();
+                fcc = 0;
+                kw.filter(function(item) {
+                    fcc++;
                     return item % 2;
                 });
             });
             it('should not run filter', function() {
-                expect(filterCallBackCount).toBe(0);
+                expect(fcc).toBe(0);
             });
             describe('when value is called on filter', function() {
                 beforeEach(function() {
-                    filterCallBackCount = 0;
-                    wrapper.filter(function(item) {
-                        filterCallBackCount++;
+                    fcc = 0;
+                    kw.filter(function(item) {
+                        fcc++;
                         return item % 2;
                     }).value();
                 });
 
                 it('should run filter callback', function() {
-                    expect(filterCallBackCount).toBe(8);
+                    expect(fcc).toBe(8);
                 });
             });
             describe('when observe is called on filter', function() {
-                var filteredObservable;
+                var fo1,fo2,fw;
                 beforeEach(function() {
-                    filterCallBackCount = 0;
-                    filteredObservable = wrapper.filter(function(item) {
-                        filterCallBackCount++;
+                    fcc = 0;
+                    fo1 = (fw = kw.filter(function(item) {
+                        fcc++;
                         return item % 2;
-                    }).observe();
+                    })).observe();
                 });
                 it('should run filter callback', function() {
-                    expect(filterCallBackCount).toBe(8);
+                    expect(fcc).toBe(8);
                 });
                 it('should return observable', function() {
-                    var arr = filteredObservable();
+                    var arr = fo1();
                     expect(arr).toContain(1);
                     expect(arr).not.toContain(2);
                     expect(arr).toContain(3);
                 });
                 describe('when base observable is changed', function() {
                     beforeEach(function() {
-                        numArray([1, 2]);
+                        oArr([1, 2]);
                     });
-
                     it('should run filter callback', function() {
-                        expect(filterCallBackCount).toBe(10);
+                        expect(fcc).toBe(10);
                     });
                     it('should update observable', function() {
-                        var arr = filteredObservable();
+                        var arr = fo1();
                         expect(arr).toContain(1);
                         expect(arr).not.toContain(2);
                         expect(arr).not.toContain(3);
                     });
                 });
+                describe('when two filters are chained and observed', function(){
+                    beforeEach(function(){                        
+                        fo2 = (fw2 = fw.filter(function(item) {
+                            fcc++;
+                            return item % 3;
+                        })).observe();
+                    });
+                    it('should run filter callback', function() {
+                        expect(fcc).toBe(12);
+                    });
+                    it('should return filtered observable',function(){
+                        var arr = fo2();
+                        expect(arr).toContain(1);
+                        expect(arr).not.toContain(2);
+                        expect(arr).not.toContain(3);
+                        arr = fo1();
+                        expect(arr).toContain(1);
+                        expect(arr).not.toContain(2);
+                        expect(arr).toContain(3);
+                    });
+
+                    describe('when base observable is changed', function() {  
+                        beforeEach(function() {
+                            oArr([1, 2, 3, 4, 5]);
+                        });                      
+                        it('should run filter callback', function() {
+                            expect(fcc).toBe(23);
+                        });
+                        it('should return filtered observable',function(){
+                            var arr = fo2();
+                            expect(arr).toContain(1);
+                            expect(arr).not.toContain(2);
+                            expect(arr).not.toContain(3);
+                            expect(arr).not.toContain(4);
+                            expect(arr).toContain(5);
+                            arr = fo1();
+                            expect(arr).toContain(1);
+                            expect(arr).not.toContain(2);
+                            expect(arr).toContain(3);
+                            expect(arr).not.toContain(4);
+                            expect(arr).toContain(5);
+                        });
+                    });
+                });
+                describe('when two filters and observes are called on kw',function(){
+                    beforeEach(function(){
+                        fo2 = kw.filter(function(item) {
+                            fcc++;
+                            return item % 3;
+                        }).observe();
+                    });
+                    it('should run filter callback', function() {
+                        expect(fcc).toBe(16);
+                    });
+                    it('should return observable', function() {
+                        var arr = fo2();
+                        expect(arr).toContain(1);
+                        expect(arr).toContain(2);
+                        expect(arr).not.toContain(3);
+                        arr = fo1();
+                        expect(arr).toContain(1);
+                        expect(arr).not.toContain(2);
+                        expect(arr).toContain(3);
+                    });
+
+                    describe('when base observable is changed', function() {
+                        beforeEach(function() {
+                            oArr([1, 2]);
+                        });
+
+                        it('should run filter callback', function() {
+                            expect(fcc).toBe(20);
+                        });
+                        it('should update observable', function() {
+                            var arr = fo2();
+                            expect(arr).toContain(1);
+                            expect(arr).toContain(2);
+                            expect(arr).not.toContain(3);
+                            arr = fo1();
+                            expect(arr).toContain(1);
+                            expect(arr).not.toContain(2);
+                            expect(arr).not.toContain(3);
+                        });
+                    });
+                });
             });
         });
         describe('when filter is called with dependencies', function() {
-            var filterCallBackCount,wrapper,filterMod,filterWrapper;
+            var fcc,kw,filterMod,filterkw;
             beforeEach(function() {
-                wrapper = numArray._();
+                kw = oArr._();
                 filterMod = ko.observable(2);
-                filterWrapper = wrapper.filter(function(item) {
-                    filterCallBackCount++;
+                filterkw = kw.filter(function(item) {
+                    fcc++;
                     return item % filterMod();
                 });
             });
             describe('when observe is called on filter with dependency', function() {
-                var filteredObservable;
+                var fo1;
                 beforeEach(function() {
-                    filterCallBackCount = 0;
-                    filteredObservable = filterWrapper.observe();
+                    fcc = 0;
+                    fo1 = filterkw.observe();
                 });
                 it('should run filter callback', function() {
-                    expect(filterCallBackCount).toBe(8);
+                    expect(fcc).toBe(8);
                 });
                 it('should return observable', function() {
-                    var arr = filteredObservable();
+                    var arr = fo1();
                     expect(arr).toContain(1);
                     expect(arr).not.toContain(2);
                     expect(arr).toContain(3);
@@ -105,38 +189,73 @@ define(['knockout', 'lodash', 'kodash'], function(ko, _) {
                         filterMod(3);
                     });
                     it('should run filter callback', function() {
-                        expect(filterCallBackCount).toBe(16);
+                        expect(fcc).toBe(16);
                     });
                     it('should update observable', function() {
-                        var arr = filteredObservable();
+                        var arr = fo1();
                         expect(arr).toContain(1);
                         expect(arr).toContain(2);
                         expect(arr).not.toContain(3);
                     });
                 });
+                describe('when observe is called on another filter with dependency',function(){
+                    var filterMod2,filterkw2,fo2;
+                    beforeEach(function(){
+                        filterMod2 = ko.observable(3);
+                        filterkw2 = kw.filter(function(item) {
+                            fcc++;
+                            return item % filterMod2();
+                        });
+                        fo2 = filterkw2.observe();
+                    });
+                    it('should run filter callback', function() {
+                        expect(fcc).toBe(16);
+                    });
+                    it('should return observable', function() {
+                        arr = fo2();
+                        expect(arr).toContain(1);
+                        expect(arr).toContain(2);
+                        expect(arr).not.toContain(3);
+                    });
+
+                    describe('when dependency is changed', function() {
+                        beforeEach(function() {
+                            filterMod2(2);
+                        });
+                        it('should run filter callback', function() {
+                            expect(fcc).toBe(24);
+                        });
+                        it('should update observable', function() {
+                            var arr = fo2();
+                            expect(arr).toContain(1);
+                            expect(arr).not.toContain(2);
+                            expect(arr).toContain(3);
+                        });
+                    });
+                });
             });
         });
         describe('when filter is called with observable argument', function() {
-            var filterCallBackCount,wrapper,filterMod,filterWrapper;
+            var fcc,kw,filterMod,filterkw;
             beforeEach(function() {
-                wrapper = numArray._();
+                kw = oArr._();
                 filterMod = ko.observable(function(item) {
-                    filterCallBackCount++;
+                    fcc++;
                     return item % 2;
                 });
-                filterWrapper = wrapper.filter(filterMod);
+                filterkw = kw.filter(filterMod);
             });
-            describe('when observe is called on filter with dependency', function() {
-                var filteredObservable;
+            describe('when observe is called on filter with observable argument', function() {
+                var fo1;
                 beforeEach(function() {
-                    filterCallBackCount = 0;
-                    filteredObservable = filterWrapper.observe();
+                    fcc = 0;
+                    fo1 = filterkw.observe();
                 });
                 it('should run filter callback', function() {
-                    expect(filterCallBackCount).toBe(8);
+                    expect(fcc).toBe(8);
                 });
                 it('should return observable', function() {
-                    var arr = filteredObservable();
+                    var arr = fo1();
                     expect(arr).toContain(1);
                     expect(arr).not.toContain(2);
                     expect(arr).toContain(3);
@@ -144,18 +263,56 @@ define(['knockout', 'lodash', 'kodash'], function(ko, _) {
                 describe('when observable argument is changed', function() {
                     beforeEach(function() {
                         filterMod(function(item) {
-                            filterCallBackCount++;
+                            fcc++;
                             return item % 3;
                         });
                     });
                     it('should run filter callback', function() {
-                        expect(filterCallBackCount).toBe(16);
+                        expect(fcc).toBe(16);
                     });
                     it('should update observable', function() {
-                        var arr = filteredObservable();
+                        var arr = fo1();
                         expect(arr).toContain(1);
                         expect(arr).toContain(2);
                         expect(arr).not.toContain(3);
+                    });
+                });
+                describe('when observe is called on another filter with observable argument',function(){
+                    var filterMod2,filterkw2,fo2;
+                    beforeEach(function(){
+                        filterMod2 = ko.observable(function(item) {
+                            fcc++;
+                            return item % 3;
+                        });
+                        filterkw2 = kw.filter(filterMod2);
+                        fo2 = filterkw2.observe();
+                    });
+                    it('should run filter callback', function() {
+                        expect(fcc).toBe(16);
+                    });
+                    it('should return observable', function() {
+                        var arr = fo2();
+                        expect(arr).toContain(1);
+                        expect(arr).toContain(2);
+                        expect(arr).not.toContain(3);
+                    });
+
+                    describe('when dependency is changed', function() {
+                        beforeEach(function() {
+                            filterMod2(function(item) {
+                                fcc++;
+                                return item % 2;
+                            });
+                        });
+                        it('should run filter callback', function() {
+                            expect(fcc).toBe(24);
+                        });
+                        it('should update observable', function() {
+                            var arr = fo2();
+                            expect(arr).toContain(1);
+                            expect(arr).not.toContain(2);
+                            expect(arr).toContain(3);
+                        });
                     });
                 });
             });

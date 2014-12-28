@@ -187,27 +187,15 @@
     });
 
     function createUnwrappedComputed(startFunc) {
-        var func = startFunc;
-        while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
-                if (func.dep) 
-                    depsToRemove.push(func);
-                func = func.parent;
-            }
-        func=func.parent;
-        while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
-                if (func.dep) 
-                    depsToRemove.push(func);
-                func = func.parent;
-            }
         return ko.computed(function() {
-            return ko.unwrap(ko.unwrap(startFunc.dep))[startFunc.root.slice(0, -2)].value();
+            return ko.unwrap(ko.unwrap(startFunc.parent['__observable__']))[startFunc.root.slice(0, -2)].value();
         });
     }
 
     function createComputedGroup(startFunc, opts) {
         opts = ko.utils.extend(opts || {});
         var retObs = ko.observable();
-        setStartFunc=_.once(function(func){startFunc=func});
+        setStartFunc=_.once(function(func){startFunc=func;});
         opts.read = function() {
             var ret = {},
                 depsToRemove = [],
@@ -266,11 +254,6 @@
                 if ('observe' === child['loFunc']) {
                     setRoot = true;
                     traverse = false;
-                    if (!child.dep)
-                        child.dep = ko.observable(retObs);
-                    else
-                        child.dep(retObs);
-                    create.push(child);
                 } else if (isLodash(lodashCalls)) {
                     var args = unwrapArgs(child['args']);
                     lodashCalls = lodashCalls[child['loFunc']].apply(lodashCalls, args);
@@ -287,7 +270,7 @@
                 if (!child.dep)
                     (child.dep = ko.observable(retObs), create.push(child));
                 else
-                    child.dep(retObs);
+                    child.dep.peek()!=retObs && 'observe' !== child['loFunc'] && child.dep(retObs);
             }
             ko.computedContext.end();
             traverse && traverseTree(child, ret, lodashCalls, retObs, create, remove);
