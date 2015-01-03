@@ -33,6 +33,7 @@ module.exports = function (grunt) {
                         baseUrl: 'javascripts/',
                         paths: {
                             'knockout': '../node_modules/knockout/build/output/knockout-latest',
+                            'knockout-deferred-updates': '../node_modules/knockout-deferred-updates/knockout-deferred-updates.min',
                             'lodash': '../node_modules/lodash/lodash'
                         }
                     }

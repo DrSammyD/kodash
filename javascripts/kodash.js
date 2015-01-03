@@ -195,7 +195,9 @@
     function createComputedGroup(startFunc, opts) {
         opts = ko.utils.extend(opts || {});
         var retObs = ko.observable();
-        setStartFunc=_.once(function(func){startFunc=func;});
+        setStartFunc=_.once(function(func){
+            startFunc=func;
+        });
         opts.read = function() {
             var ret = {},
                 depsToRemove = [],
@@ -236,6 +238,7 @@
             });
             return ret;
         };
+
         return ko.computed(opts);
     }
     var cb = function() {
