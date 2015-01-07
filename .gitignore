@@ -3,3 +3,4 @@ _SpecRunner.html
 nuget/*.nupkg
 .grunt
 npm-debug.log
+/build/reports/coverage/lcov-report

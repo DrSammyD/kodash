@@ -27,7 +27,19 @@ module.exports = function(config) {
         ],
  
         // test results reporter to use
-        reporters: ['progress'],
+        reporters: ['progress','coverage'],
+
+        //what files to preprocess and how before tests
+        preprocessors:{
+            'javascripts/**/*.js':['coverage']
+        },
+
+        coverageReporter:{
+            dir: 'build/reports/coverage',
+            reporters:[
+                {type:'lcov', subdir: '.'}
+            ]
+        },
  
         // web server port
         port: 9876,
