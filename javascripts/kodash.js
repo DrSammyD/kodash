@@ -174,7 +174,7 @@
     var observe = function(opts) {
         var wrapper = new kodashWrapper();
         kodashPushFunction(wrapper, 'observe', arguments, this);
-        window.comps.push(createComputedGroup(wrapper['__func__'], opts));
+        createComputedGroup(wrapper['__func__'], opts);
         return createUnwrappedComputed(wrapper['__func__']);
     };
     _.mixin(kodashWrapper.prototype, {
@@ -261,7 +261,6 @@
     var cb = function() {
         throw DETECTED;
     };
-    window.comps = [];
     var traverseTree = function(func, ret, result, retObs, create, remove) {
         var lodashCall = result,
             setRoot = false;
