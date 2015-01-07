@@ -3,8 +3,8 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
 
         watch: {
-            files: ['**/*.js'],
-            tasks: ['jasmine', 'jshint']
+            files: ['javascripts/*.js','spec/*.js'],
+            tasks: ['karma:unit:run','jshint']
         },
 
         nugetpack: {
@@ -22,27 +22,24 @@ module.exports = function (grunt) {
                 src: 'nuget/*.nupkg'
             }
         },
-        
-        jasmine: {
-            src: 'src/*.js',
-            options: {
-                specs: 'spec/*.js',
-                template: require('grunt-template-jasmine-requirejs'),
-                templateOptions: {
-                    requireConfig: {
-                        baseUrl: 'javascripts/',
-                        paths: {
-                            'knockout': '../node_modules/knockout/build/output/knockout-latest',
-                            'knockout-deferred-updates': '../node_modules/knockout-deferred-updates/knockout-deferred-updates.min',
-                            'lodash': '../node_modules/lodash/lodash'
-                        }
-                    }
-                }
+        karma:{
+            continuous: {
+                configFile: 'karma.conf.js',
+                singleRun: true,
+                browsers: ['PhantomJS']
+            },
+            unit:{
+                configFile:'karma.conf.js',
+                browsers: ['Chrome'],
+                background:true,
+                singleRun:false
             }
         },
-
         jshint: {
-            all: ['Gruntfile.js', 'src/**/*.js', '!src/**/*.min.map', '!src/**/*.min.js', 'spec/**/*.js']
+            all: ['Gruntfile.js', 'javascripts/**/*.js', '!javascripts/**/*.min.map', '!javascripts/**/*.min.js', 'spec/**/*.js'],
+            options: {
+                jshintrc: '.jshintrc' // relative to Gruntfile
+            }
         },
 
         clean: ['nuget/*.nupkg'],
@@ -53,7 +50,7 @@ module.exports = function (grunt) {
                 // we'll use grunt-bump to increment the version as it
                 // supports reloading the pkg config var which we need
                 // as it is referenced when the nuget tasks are run
-                bump: false,
+                bump: false,    
                 commitMessage: 'Release <%= version %>'
                 /*github: { 
                     repo: 'linn/backbone.hypermedia'
@@ -85,15 +82,14 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-clean');
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-bump');
     grunt.loadNpmTasks('grunt-nuget');
     grunt.loadNpmTasks('grunt-release');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-uglify');grunt.loadNpmTasks('grunt-karma');
 
-    grunt.registerTask('test', ['jshint', 'jasmine']);
+    grunt.registerTask('test', ['jshint', 'karma:continuous']);
     grunt.registerTask('minify', ['uglify']);
     grunt.registerTask('default', ['test', 'minify']);
     grunt.registerTask('publish', ['publish:patch']);

@@ -13,20 +13,22 @@
             if (obj.hasOwnProperty(a) && obj[a] && obj[a].toString().indexOf(match) >= 0)
                 return a;
     }
+
     function findSubObjectWithProperty(obj, prop) {
         for (var a in obj)
             if (obj.hasOwnProperty(a) && obj[a] && obj[a][prop])
                 return obj[a];
     }
     var depDet = findSubObjectWithProperty(ko, 'end'),
-    depDetBeginName = findNameMethodSignatureContaining(depDet, '.push'),
-    // end coppied code
+        depDetBeginName = findNameMethodSignatureContaining(depDet, '.push'),
+        // end coppied code
 
-    DETECTED = {},
-    hasOwn = Object.prototype.hasOwnProperty;
+        DETECTED = {},
+        OBSERVED = {},
+        hasOwn = Object.prototype.hasOwnProperty;
 
-    function isLodash(lodashCalls) {
-        return lodashCalls && typeof lodashCalls === 'object' && !_.isArray(lodashCalls) && hasOwn.call(lodashCalls, '__wrapped__');
+    function isLodash(lodashCall) {
+        return lodashCall && typeof lodashCall === 'object' && !_.isArray(lodashCall) && hasOwn.call(lodashCall, '__wrapped__');
     }
 
     function kodashWrapper(obs) {
@@ -44,25 +46,26 @@
         var chars = "";
         var rem;
         while (~length) {
-            chars += String.fromCharCode((rem=(length % 65536))+ 45);
-            length-=rem;
-            length = length?length/65536:-1;
+            chars += String.fromCharCode((rem = (length % 65536)) + 45);
+            length -= rem;
+            length = length ? length / 65536 : -1;
         }
         return chars;
     }
-    function getIndexFromKey(key)
-    {
+
+    function getIndexFromKey(key) {
         var index = 0;
         var currentChar = 0;
-        while(currentChar < key.length){
-            index+=Math.pow(65536,currentChar)*(key.charCodeAt(currentChar)-45);
+        while (currentChar < key.length) {
+            index += Math.pow(65536, currentChar) * (key.charCodeAt(currentChar) - 45);
             currentChar++;
         }
         return index;
     }
-    function resolveIndexFromPaths(path,current){
-        var next = path.slice(current.length+1);
-        next = next.slice(0,~next.indexOf(',')?next.indexOf(','):next.length);
+
+    function resolveIndexFromPaths(path, current) {
+        var next = path.slice(current.length + 1);
+        next = next.slice(0, ~next.indexOf(',') ? next.indexOf(',') : next.length);
         return getIndexFromKey(next);
     }
     kodashWrapper['fn'] = kodashWrapper['prototype'];
@@ -125,8 +128,8 @@
         return this;
     };
     var mutate = function() {
-        var func=this['__func__'];
-        while(func.parent) func=func.parent;
+        var func = this['__func__'];
+        while (func.parent) func = func.parent;
         if (ko.isWriteableObservable(func['__observable__'][""])) {
             var loVal = this.wrappedValueOf();
             func['__observable__'][""]((loVal).valueOf());
@@ -135,32 +138,32 @@
     };
     var wrappedValueOf = function() {
         var ret = {},
-            depsToRemove = [],
+            remove = [],
             create = [],
             func = this['__func__'],
-            lodashCalls,
+            lodashCall,
             path = func.root;
         while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
-            if (func.dep) 
-                depsToRemove.push(func);
+            if (func.dep)
+                remove.push(func);
             func = func.parent;
         }
         ko.unwrap(ko.unwrap(func.dep));
-        lodashCalls = ko.unwrap(func.parent['__observable__']);
-        lodashCalls = lodashCalls[func.root.slice(0, -2)];
-        lodashCalls = ko.unwrap(lodashCalls);
+        lodashCall = ko.unwrap(func.parent['__observable__']);
+        lodashCall = lodashCall[func.root.slice(0, -2)];
+        lodashCall = ko.unwrap(lodashCall);
         if (!func.parent.parent)
-            lodashCalls = _(lodashCalls);
-        if (isLodash(lodashCalls)) {
-            while(func){                
+            lodashCall = _(lodashCall);
+        if (isLodash(lodashCall)) {
+            while (func) {
                 var args = unwrapArgs(func['args']);
-                lodashCalls = lodashCalls[func['loFunc']].apply(lodashCalls, args);
-                lodashCalls = func.rewrap ? _(lodashCalls) : lodashCalls;
+                lodashCall = lodashCall[func['loFunc']].apply(lodashCall, args);
+                lodashCall = func.rewrap ? _(lodashCall) : lodashCall;
                 parent--;
-                func = func.children[resolveIndexFromPaths(path,func.root)];
+                func = func.children[resolveIndexFromPaths(path, func.root)];
             }
         }
-        return lodashCalls;
+        return lodashCall;
     };
     var valueOf = function() {
         var wrapper = new kodashWrapper();
@@ -171,7 +174,7 @@
     var observe = function(opts) {
         var wrapper = new kodashWrapper();
         kodashPushFunction(wrapper, 'observe', arguments, this);
-        createComputedGroup(wrapper['__func__'], opts)();
+        window.comps.push(createComputedGroup(wrapper['__func__'], opts));
         return createUnwrappedComputed(wrapper['__func__']);
     };
     _.mixin(kodashWrapper.prototype, {
@@ -200,52 +203,67 @@
         });
         opts.read = function() {
             var ret = {},
-                depsToRemove = [],
+                remove = [],
                 create = [],
                 func = startFunc,
                 lodashCalls;
             while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
                 if (func.dep) 
-                    depsToRemove.push(func);
+                    remove.push(func);
                 func = func.parent;
             }
             setStartFunc(func);
-            ko.unwrap(ko.unwrap(func.dep));
-            lodashCalls = ko.unwrap(func.parent['__observable__']);
-            lodashCalls = lodashCalls[func.root.slice(0, -2)];
-            lodashCalls = ko.unwrap(lodashCalls);
+            lodashCall = getLodashCall(func);
             if (func.loFunc === 'observe')
-                return lodashCalls;
-            if (!func.parent.parent)
-                lodashCalls = _(lodashCalls);
-            if (isLodash(lodashCalls)) {
-                var args = unwrapArgs(func['args']);
-                lodashCalls = lodashCalls[func['loFunc']].apply(lodashCalls, args);
-                lodashCalls = func.rewrap ? _(lodashCalls) : lodashCalls;
-                ko.isObservable(func.__observable__)? func.__observable__()[func.root]=lodashCalls: func.__observable__=lodashCalls;
-            }
-            traverseTree(func, ret, lodashCalls, retObs, create, depsToRemove);
+                return lodashCall;
+            lodashCall = callLodashCall(func, lodashCall);
+            traverseTree(func, ret, lodashCall, retObs, create, remove);
 
-            retObs(ret); 
-            _.each(depsToRemove, function(item) {
-                var dep = item.dep;
-                item.dep = null;
-                dep(null);
-                dep['__comp__'].dispose();
-            });
-            _.each(create, function(item) {
-                item.dep['__comp__'] = createComputedGroup(item);
-            });
+            retObs(ret);
+            _.each(remove, removeFunc);
+            _.each(create, createFunc);
             return ret;
         };
 
         return ko.computed(opts);
     }
+    var callLodashCall = function(func, lodashCall) {
+        if (isLodash(lodashCall)) {
+            var args = unwrapArgs(func['args']);
+            lodashCall = lodashCall[func['loFunc']].apply(lodashCall, args);
+            lodashCall = func.rewrap ? _(lodashCall) : lodashCall;
+            ko.isObservable(func.__observable__) ? func.__observable__()[func.root] = lodashCall : func.__observable__ = lodashCall;
+        }
+        return lodashCall;
+    };
+    var getLodashCall = function(func) {
+        var lodashCall;
+        ko.unwrap(ko.unwrap(func.dep));
+        lodashCall = ko.unwrap(func.parent['__observable__']);
+        lodashCall = lodashCall[func.root.slice(0, -2)];
+        lodashCall = ko.unwrap(lodashCall);
+        if (func.loFunc === 'observe')
+            return lodashCall;
+        if (!func.parent.parent)
+            lodashCall = _(lodashCall);
+        return lodashCall;
+    };
+    var removeFunc = function(item) {
+        if (!item.dep) return;
+        var dep = item.dep;
+        item.dep = null;
+        dep(null);
+        dep['__comp__'].dispose();
+    };
+    var createFunc = function(item) {
+        item.dep['__comp__'] = createComputedGroup(item);
+    };
     var cb = function() {
         throw DETECTED;
     };
+    window.comps = [];
     var traverseTree = function(func, ret, result, retObs, create, remove) {
-        var lodashCalls = result,
+        var lodashCall = result,
             setRoot = false;
 
         _(func.children).each(function(child) {
@@ -257,28 +275,32 @@
                 if ('observe' === child['loFunc']) {
                     setRoot = true;
                     traverse = false;
-                } else if (isLodash(lodashCalls)) {
+                } else if (isLodash(lodashCall)) {
+                    if(_(child.children).any({'loFunc':'observe'})){
+                        throw OBSERVED;
+                    }
                     var args = unwrapArgs(child['args']);
-                    lodashCalls = lodashCalls[child['loFunc']].apply(lodashCalls, args);
-                    lodashCalls = func.rewrap ? _(lodashCalls) : lodashCalls;
-                    if (child.dep) 
+                    lodashCall = lodashCall[child['loFunc']].apply(lodashCall, args);
+                    lodashCall = func.rewrap ? _(lodashCall) : lodashCall;
+                    if (child.dep)
                         remove.push(child);
-                    child['__observable__'] = lodashCalls;
+                    child['__observable__'] = lodashCall;
                 }
             } catch (e) {
-                if (e !== DETECTED)
+                if (e !== DETECTED && e !== OBSERVED)
                     throw e;
                 setRoot = true;
                 traverse = false;
-                if (!child.dep)
+                if(e ==OBSERVED);
+                else if (!child.dep)
                     (child.dep = ko.observable(retObs), create.push(child));
                 else
-                    child.dep.peek()!=retObs && 'observe' !== child['loFunc'] && child.dep(retObs);
+                    child.dep.peek() != retObs && 'observe' !== child['loFunc'] && child.dep(retObs);
             }
             ko.computedContext.end();
-            traverse && traverseTree(child, ret, lodashCalls, retObs, create, remove);
+            traverse && traverseTree(child, ret, lodashCall, retObs, create, remove);
         });
-        if(setRoot){
+        if (setRoot) {
             ret[func.root] = result;
             func['__observable__'] = retObs;
         }
