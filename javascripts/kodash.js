@@ -34,12 +34,19 @@
     function kodashWrapper(obs) {
         this['__func__'] = {
             children: [],
-            root: ''
+            root: '',
+            loFunc:'tap',
+            args:[_.noop]
         };
-        if (obs)
-            this['__func__']['__observable__'] = {
-                '': obs
-            };
+        if (obs){
+            this['__func__'].parent={children:[this['__func__']]};
+            this['__func__'].parent['__output__'] = ko.computed(function() {
+                return {
+                    '': _(obs())
+                };
+            });
+            current = this['__func__'].parent;
+        }
     }
 
     function getKeyFromLength(length) {
@@ -75,7 +82,6 @@
             loFunc: loFunc,
             args: args,
             comp: null,
-            rewrap: false,
             root: current['__func__'].root.split(',').concat(getKeyFromLength(current['__func__'].children.length)).join(','),
             parent: current['__func__'],
             children: [],
@@ -119,47 +125,32 @@
             });
         }
     });
-
-    var rewrap = function() {
-        lastFunc = this['__func__'];
-        if (lastFunc) {
-            lastFunc['rewrap'] = true;
-        }
-        return this;
-    };
     var mutate = function() {
         var func = this['__func__'];
         while (func.parent) func = func.parent;
-        if (ko.isWriteableObservable(func['__observable__'][""])) {
+        if (ko.isWriteableObservable(func['__output__'][""])) {
             var loVal = this.wrappedValueOf();
-            func['__observable__'][""]((loVal).valueOf());
+            func['__output__'][""]((loVal).valueOf());
         }
-        return func['__observable__'];
+        return func['__output__'];
     };
     var wrappedValueOf = function() {
-        var ret = {},
+        var outputObj = {},
             remove = [],
             create = [],
             func = this['__func__'],
             lodashCall,
             path = func.root;
-        while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
+        while (!ko.isObservable(func.parent['__output__'] || 0) && func.parent.parent) {
             if (func.dep)
                 remove.push(func);
             func = func.parent;
         }
-        ko.unwrap(ko.unwrap(func.dep));
-        lodashCall = ko.unwrap(func.parent['__observable__']);
-        lodashCall = lodashCall[func.root.slice(0, -2)];
-        lodashCall = ko.unwrap(lodashCall);
-        if (!func.parent.parent)
-            lodashCall = _(lodashCall);
+        lodashCall = getLodashCall(func);
         if (isLodash(lodashCall)) {
             while (func) {
                 var args = unwrapArgs(func['args']);
                 lodashCall = lodashCall[func['loFunc']].apply(lodashCall, args);
-                lodashCall = func.rewrap ? _(lodashCall) : lodashCall;
-                parent--;
                 func = func.children[resolveIndexFromPaths(path, func.root)];
             }
         }
@@ -178,8 +169,6 @@
         return createUnwrappedComputed(wrapper['__func__']);
     };
     _.mixin(kodashWrapper.prototype, {
-        _: rewrap,
-        rewrap: rewrap,
         mutate: mutate,
         wrappedValueOf: wrappedValueOf,
         wrappedValue: wrappedValueOf,
@@ -191,61 +180,74 @@
 
     function createUnwrappedComputed(startFunc) {
         return ko.computed(function() {
-            return ko.unwrap(ko.unwrap(startFunc.parent['__observable__']))[startFunc.root.slice(0, -2)].value();
+            return ko.unwrap(ko.unwrap(startFunc.parent['__output__']))[startFunc.root.slice(0, -2)].value();
         });
     }
 
-    function createComputedGroup(startFunc, opts) {
-        opts = ko.utils.extend(opts || {});
-        var retObs = ko.observable();
-        setStartFunc=_.once(function(func){
-            startFunc=func;
+    function createComputedGroup(func, opts) {
+        var outputObservable = ko.observable(),
+        startFuncSet= false,
+        startFunc = _.once(function(func) {
+            startFuncSet=true;
+            return func;
         });
+        opts = ko.utils.extend(opts || {});
         opts.read = function() {
-            var ret = {},
+            var outputObj = {},
                 remove = [],
                 create = [],
-                func = startFunc,
-                lodashCalls;
-            while (!ko.isObservable(func.parent['__observable__'] || 0) && func.parent.parent) {
-                if (func.dep) 
-                    remove.push(func);
-                func = func.parent;
-            }
-            setStartFunc(func);
-            lodashCall = getLodashCall(func);
-            if (func.loFunc === 'observe')
+                lodashCalls,
+                funcIttr;
+            funcIttr = determineStart(startFuncSet,funcIttr,startFunc,func,remove);
+            if(funcIttr != startFunc(funcIttr))
+                return null;
+            lodashCall = getLodashCall(funcIttr);
+            if (funcIttr.loFunc === 'observe')
                 return lodashCall;
-            lodashCall = callLodashCall(func, lodashCall);
-            traverseTree(func, ret, lodashCall, retObs, create, remove);
+            lodashCall = callLodashCall(funcIttr, lodashCall,outputObj);
+            traverseTree(funcIttr, outputObj, lodashCall, outputObservable, create, remove);
 
-            retObs(ret);
             _.each(remove, removeFunc);
+            outputObservable(outputObj);
             _.each(create, createFunc);
-            return ret;
+            return outputObj;
         };
 
-        return ko.computed(opts);
+        var comp= ko.computed(opts);
+        startFunc().dep['__comp__']  || (startFunc().dep['__comp__']=comp);
+        return comp;
     }
+    var determineStart=function(startFuncSet,funcIttr,startFunc,func,remove){
+        if (!startFuncSet) {
+            funcIttr= func;
+            while (funcIttr.parent && !ko.isObservable(funcIttr.parent['__output__'] || 0)) {
+                funcIttr = funcIttr.parent;
+            }
+            if(!funcIttr.dep){
+                funcIttr.dep=ko.observable(funcIttr.parent['__output__']);
+            }
+        }
+        funcIttr=startFunc(funcIttr);
+        while (funcIttr.parent && !ko.isObservable(funcIttr.parent['__output__'] || 0)) {
+            if (funcIttr.dep)
+                remove.push(funcIttr);
+            funcIttr = funcIttr.parent;
+        }
+        return funcIttr;
+    };
     var callLodashCall = function(func, lodashCall) {
         if (isLodash(lodashCall)) {
             var args = unwrapArgs(func['args']);
             lodashCall = lodashCall[func['loFunc']].apply(lodashCall, args);
-            lodashCall = func.rewrap ? _(lodashCall) : lodashCall;
-            ko.isObservable(func.__observable__) ? func.__observable__()[func.root] = lodashCall : func.__observable__ = lodashCall;
         }
         return lodashCall;
     };
     var getLodashCall = function(func) {
         var lodashCall;
         ko.unwrap(ko.unwrap(func.dep));
-        lodashCall = ko.unwrap(func.parent['__observable__']);
+        lodashCall = ko.unwrap(func.parent['__output__']);
         lodashCall = lodashCall[func.root.slice(0, -2)];
         lodashCall = ko.unwrap(lodashCall);
-        if (func.loFunc === 'observe')
-            return lodashCall;
-        if (!func.parent.parent)
-            lodashCall = _(lodashCall);
         return lodashCall;
     };
     var removeFunc = function(item) {
@@ -261,7 +263,7 @@
     var cb = function() {
         throw DETECTED;
     };
-    var traverseTree = function(func, ret, result, retObs, create, remove) {
+    var traverseTree = function(func, outputObj, result, outputObservable, create, remove) {
         var lodashCall = result,
             setRoot = false;
 
@@ -275,33 +277,31 @@
                     setRoot = true;
                     traverse = false;
                 } else if (isLodash(lodashCall)) {
-                    if(_(child.children).any({'loFunc':'observe'})){
+                    if (_.any(child.children,{'loFunc': 'observe'})) {
                         throw OBSERVED;
                     }
                     var args = unwrapArgs(child['args']);
                     lodashCall = lodashCall[child['loFunc']].apply(lodashCall, args);
-                    lodashCall = func.rewrap ? _(lodashCall) : lodashCall;
                     if (child.dep)
                         remove.push(child);
-                    child['__observable__'] = lodashCall;
+                    child['__output__'] = lodashCall;
                 }
             } catch (e) {
                 if (e !== DETECTED && e !== OBSERVED)
                     throw e;
                 setRoot = true;
                 traverse = false;
-                if(e ==OBSERVED);
-                else if (!child.dep)
-                    (child.dep = ko.observable(retObs), create.push(child));
+                if (!child.dep)
+                    (child.dep = ko.observable(outputObservable), create.push(child));
                 else
-                    child.dep.peek() != retObs && 'observe' !== child['loFunc'] && child.dep(retObs);
+                    child.dep.peek() != outputObservable && 'observe' !== child['loFunc'] && child.dep(outputObservable);
             }
             ko.computedContext.end();
-            traverse && traverseTree(child, ret, lodashCall, retObs, create, remove);
+            traverse && traverseTree(child, outputObj, lodashCall, outputObservable, create, remove);
         });
         if (setRoot) {
-            ret[func.root] = result;
-            func['__observable__'] = retObs;
+            outputObj[func.root] = result;
+            func['__output__'] = outputObservable;
         }
     };
     ko.observable['fn']['_'] = ko.observable['fn']['kodash'] = ko.dependentObservable['fn']['_'] = ko.dependentObservable['fn']['kodash'] = function() {

@@ -3,6 +3,7 @@ define(['knockout', 'lodash', 'chai', 'kodash'], function(ko, _, chai) {
     describe('kodash', function() {
         var baseObservableArray;
         beforeEach(function() {
+            window.comps=[];
             baseObservableArray = ko.observableArray([1, 2, 3, 4, 5, 6, 7, 8]);
         });
         describe('when wrap is called', function() {
@@ -40,7 +41,6 @@ define(['knockout', 'lodash', 'chai', 'kodash'], function(ko, _, chai) {
             describe('when observe is called on filter', function() {
                 var filteredObservable1, filteredObservable2;
                 beforeEach(function() {
-                    window.comps=[];
                     filterCounter = 0;
                     filteredObservable1 = filteredWrapper.observe();
                 });
@@ -138,6 +138,48 @@ define(['knockout', 'lodash', 'chai', 'kodash'], function(ko, _, chai) {
                             var arr = filteredObservable2();
                             expect(arr).to.include.members([1, 2]);
                             expect(arr).to.not.include(3);
+                            arr = filteredObservable1();
+                            expect(arr).to.include(1);
+                            expect(arr).to.not.include.members([2, 3]);
+                        });
+                    });
+                });
+                describe('when two filters, one with a map, and two observes are called on kodashWrapper', function() {
+                    beforeEach(function() {
+                        filterCounter = 0;
+                        filteredObservable2 = kodashWrapper.filter(function(item) {
+                            filterCounter++;
+                            return item % 3;
+                        }).map(function(item){
+                            filterCounter++; 
+                            return item+1;
+                        }).observe();
+                    });
+                    it('should run filter callback', function() {
+                        expect(filterCounter).to.equal(14);
+                    });
+                    it('should return observable', function() {
+                        var arr = filteredObservable2();
+                        expect(arr).to.include.members([2, 3]);
+                        expect(arr).to.not.include(4);
+                        arr = filteredObservable1();
+                        expect(arr).to.include.members([1, 3]);
+                        expect(arr).to.not.include(2);
+                    }); 
+
+                    describe('when base observable is changed', function() {
+                        beforeEach(function() {
+                            filterCounter = 0;
+                            baseObservableArray([1, 2]);
+                        });
+
+                        it('should run filter callback', function() {
+                            expect(filterCounter).to.equal(5);
+                        });
+                        it('should update observable', function() {
+                            var arr = filteredObservable2();
+                            expect(arr).to.include.members([2, 3]);
+                            expect(arr).to.not.include(4);
                             arr = filteredObservable1();
                             expect(arr).to.include(1);
                             expect(arr).to.not.include.members([2, 3]);
