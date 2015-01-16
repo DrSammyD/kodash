@@ -28,6 +28,7 @@
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-uglify": "^0.6.0",
     "grunt-contrib-watch": "^0.6.1",
+    "grunt-karma": "^0.10.1",
     "grunt-node-inspector": "^0.1.5",
     "grunt-nuget": "~0.1.2",
     "grunt-release": "^0.7.0",
