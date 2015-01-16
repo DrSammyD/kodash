@@ -1,11 +1,11 @@
 {
-  "name": "backbone-hypermedia",
-  "description": "Backbone plugin providing support for following hypermedia controls from Backbone models and collections.",
-  "url": "https://github.com/linn/backbone.hypermedia",
+  "name": "kodash",
+  "description": "Knockout dependency detection in chained lodash calls",
+  "url": "https://github.com/DrSammyD/kodash",
   "keywords": [
-    "backbone",
-    "hypermedia",
-    "REST"
+    "knockout",
+    "lodash",
+    "functional"
   ],
   "author": {
     "name": "Sam Armstrong",
@@ -16,8 +16,7 @@
   },
   "dependencies": {
     "knockout": ">=2.3.0",
-    "lodash": ">=2.4.0",
-    "knockout-deferred-updates": "~3.2.1"
+    "lodash": ">=2.4.0"
   },
   "devDependencies": {
     "chai": "^1.10.0",
@@ -49,7 +48,7 @@
     "requirejs": "^2.1.15"
   },
   "main": "javascripts/kodash.js",
-  "version": "4.0.0",
+  "version": "2.0.0",
   "license": "MIT",
   "repository": {
     "type": "git",
