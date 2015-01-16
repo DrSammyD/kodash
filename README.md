@@ -54,20 +54,7 @@ z();
 //=>[3,4,5]
 ```
 
-One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If you expect lodash to do this for one of your calls, simply perform the following
-
-```
-var x= ko.observableArray([[1,2,0], 3]);
-x._().first()._().filter().value();
-//=>[1,2]
-```
-
-Calling _() in your chain will rewrap the value so that it can continue to be chained. Any lodash functions called without a rewrap will be skipped.
-```
-var x= ko.observableArray([[1,2,0], 3]);
-x._().first().filter().value();
-//=>[1,2,0]
-```
+One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If you expect lodash to do this for one of your calls, make sure that you chain it.
 
 
-Checkout this [jsfiddle](http://jsfiddle.net/FZek4/154/) for more intersting behavior
+Checkout this [jsfiddle](http://jsfiddle.net/FZek4/170/) for more intersting behavior
