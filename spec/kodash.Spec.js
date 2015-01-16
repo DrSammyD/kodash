@@ -165,7 +165,7 @@ define(['knockout', 'lodash', 'chai', 'kodash'], function(ko, _, chai) {
                         arr = filteredObservable1();
                         expect(arr).to.include.members([1, 3]);
                         expect(arr).to.not.include(2);
-                    }); 
+                    });
 
                     describe('when base observable is changed', function() {
                         beforeEach(function() {
@@ -174,7 +174,7 @@ define(['knockout', 'lodash', 'chai', 'kodash'], function(ko, _, chai) {
                         });
 
                         it('should run filter callback', function() {
-                            expect(filterCounter).to.equal(5);
+                            expect(filterCounter).to.equal(6);
                         });
                         it('should update observable', function() {
                             var arr = filteredObservable2();
