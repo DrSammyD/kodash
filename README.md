@@ -1,5 +1,6 @@
 kodash
 ======
+[![Build Status](https://travis-ci.org/DrSammyD/kodash.svg?branch=master)](https://travis-ci.org/DrSammyD/kodash)
 
 Knockout dependency detection in chained lodash (soon to be underscore as well) calls.
 
