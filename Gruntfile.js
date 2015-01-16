@@ -9,7 +9,7 @@ module.exports = function (grunt) {
 
         nugetpack: {
             dist: {
-                src: 'nuget/backbone.hypermedia.nuspec',
+                src: 'nuget/kodash.nuspec',
                 dest: 'nuget/',
                 options: {
                     version: '<%= pkg.version %>'
@@ -53,7 +53,7 @@ module.exports = function (grunt) {
                 bump: false,    
                 commitMessage: 'Release <%= version %>'
                 /*github: { 
-                    repo: 'linn/backbone.hypermedia'
+                    repo: 'DrSammyD/kodash'
                 }*/
             }
         },
