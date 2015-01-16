@@ -33,6 +33,8 @@
         <h1>
 <a id="kodash" class="anchor" href="#kodash" aria-hidden="true"><span class="octicon octicon-link"></span></a>kodash</h1>
 
+<p><a href="https://travis-ci.org/DrSammyD/kodash"><img src="https://travis-ci.org/DrSammyD/kodash.svg?branch=master" alt="Build Status"></a></p>
+
 <p>Knockout dependency detection in chained lodash (soon to be underscore as well) calls.</p>
 
 <p>It's a simple extension of KnockoutJS which allows you to call lodash functions on observableArrays and observables.</p>
@@ -84,21 +86,9 @@ z();
 //=&gt;[3,4,5]
 </code></pre>
 
-<p>One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If you expect lodash to do this for one of your calls, simply perform the following</p>
+<p>One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If you expect lodash to do this for one of your calls, make sure that you chain it.</p>
 
-<pre><code>var x= ko.observableArray([[1,2,0], 3]);
-x._().first()._().filter().value();
-//=&gt;[1,2]
-</code></pre>
-
-<p>Calling _() in your chain will rewrap the value so that it can continue to be chained. Any lodash functions called without a rewrap will be skipped.</p>
-
-<pre><code>var x= ko.observableArray([[1,2,0], 3]);
-x._().first().filter().value();
-//=&gt;[1,2,0]
-</code></pre>
-
-<p>Checkout this <a href="http://jsfiddle.net/FZek4/154/">jsfiddle</a> for more intersting behavior</p>
+<p>Checkout this <a href="http://jsfiddle.net/FZek4/170/">jsfiddle</a> for more intersting behavior</p>
       </section>
       <footer>
         <p><small>Hosted on <a href="http://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
