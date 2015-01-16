@@ -87,7 +87,8 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-bump');
     grunt.loadNpmTasks('grunt-nuget');
     grunt.loadNpmTasks('grunt-release');
-    grunt.loadNpmTasks('grunt-contrib-uglify');grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-karma');
 
     grunt.registerTask('test', ['jshint', 'karma:continuous']);
     grunt.registerTask('minify', ['uglify']);
