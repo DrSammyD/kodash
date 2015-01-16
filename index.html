@@ -31,14 +31,14 @@
       </header>
       <section>
         <h1>
-<a name="kodash" class="anchor" href="#kodash"><span class="octicon octicon-link"></span></a>kodash</h1>
+<a id="kodash" class="anchor" href="#kodash" aria-hidden="true"><span class="octicon octicon-link"></span></a>kodash</h1>
 
 <p>Knockout dependency detection in chained lodash (soon to be underscore as well) calls.</p>
 
 <p>It's a simple extension of KnockoutJS which allows you to call lodash functions on observableArrays and observables.</p>
 
 <h1>
-<a name="getting-the-value-from-the-wrapper" class="anchor" href="#getting-the-value-from-the-wrapper"><span class="octicon octicon-link"></span></a>Getting the value from the wrapper</h1>
+<a id="getting-the-value-from-the-wrapper" class="anchor" href="#getting-the-value-from-the-wrapper" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting the value from the wrapper</h1>
 
 <pre><code>var x = ko.observableArray([1,2,0,0,3,4,5]);
 x._().filter().value();
@@ -46,7 +46,7 @@ x._().filter().value();
 </code></pre>
 
 <h1>
-<a name="mutating" class="anchor" href="#mutating"><span class="octicon octicon-link"></span></a>Mutating</h1>
+<a id="mutating" class="anchor" href="#mutating" aria-hidden="true"><span class="octicon octicon-link"></span></a>Mutating</h1>
 
 <p>Now let's say you want to mutate your observableArray
 with the current value of your lodash calls</p>
@@ -58,7 +58,7 @@ x();
 </code></pre>
 
 <h1>
-<a name="making-observablearrays" class="anchor" href="#making-observablearrays"><span class="octicon octicon-link"></span></a>Making observableArrays</h1>
+<a id="making-observablearrays" class="anchor" href="#making-observablearrays" aria-hidden="true"><span class="octicon octicon-link"></span></a>Making observableArrays</h1>
 
 <pre><code>var x = ko.observableArray([1,2,0,0,3,4,5]);
 var y = x._().filter().observe();
@@ -68,7 +68,7 @@ y();
 </code></pre>
 
 <h1>
-<a name="chaining-dependencies" class="anchor" href="#chaining-dependencies"><span class="octicon octicon-link"></span></a>Chaining dependencies</h1>
+<a id="chaining-dependencies" class="anchor" href="#chaining-dependencies" aria-hidden="true"><span class="octicon octicon-link"></span></a>Chaining dependencies</h1>
 
 <pre><code>var x = ko.observableArray([1,2,3,4,5]);
 var y = ko.observableArray([1]);
