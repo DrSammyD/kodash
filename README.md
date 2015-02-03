@@ -1,5 +1,7 @@
 kodash
 ======
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/DrSammyD/kodash?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/DrSammyD/kodash.svg?branch=master)](https://travis-ci.org/DrSammyD/kodash)
 
 Knockout dependency detection in chained lodash (soon to be underscore as well) calls.
