@@ -92,11 +92,11 @@
     var unwrapArgs = function(args) {
         var observableflag = false;
         argArr = [];
-        _(args).reverse().each(function(item, index) {
-            var arg = item;
+        for (var i = args.length - 1; i >= 0; i--) {
+            var arg=args[i];
             arg = ko.utils.unwrapObservable(arg);
             argArr.push(arg);
-        });
+        }
         return argArr;
     };
     _.mixin(kodashWrapper.prototype, _(_.prototype).keys().object().mapValues(function(val, key) {
@@ -258,7 +258,7 @@
                 ko.computedContext.end();
                 traverse && traverseTree(child, outputObj, lodashCall, outputObservable, create, remove);
             }
-        });
+        }).value();
         if (setOutput) {
             outputObj[func.root] = result;
             func['__output__'] = outputObservable;

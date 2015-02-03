@@ -10,8 +10,8 @@ requirejs.config({
     paths: {
         'test-main':'./test/test-main',
         'kodash': './javascripts/kodash',
-        'knockout': './node_modules/knockout/build/output/knockout-latest',
-        'lodash': './node_modules/lodash/dist/lodash',
+        'knockout': './bower_components/knockout/dist/knockout.debug',
+        'lodash': './bower_components/lodash/dist/lodash',
         'chai': 'node_modules/chai/chai'
     },
  

@@ -12,6 +12,7 @@ module.exports = function(config) {
               './test/test-main.js',
               {pattern:'./spec/*.js',included:false, served:true},
               {pattern:'./javascripts/*.js',included:false, served:true},
+              {pattern: 'bower_components/**/*.js', included: false},
               {pattern: 'node_modules/**/*.js', included: false}
         ],
 
