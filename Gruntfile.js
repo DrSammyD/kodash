@@ -100,7 +100,7 @@ module.exports = function(grunt) {
     grunt.registerTask('minify', ['uglify']);
     grunt.registerTask('default', ['test', 'minify']);
     grunt.registerTask('publish', ['publish:patch']);
-    grunt.registerTask('publish:patch', ['clean', 'minify', 'bump:patch', 'release', 'nugetpack', 'nugetpush']);
-    grunt.registerTask('publish:minor', ['clean', 'minify', 'bump:minor', 'release', 'nugetpack', 'nugetpush']);
-    grunt.registerTask('publish:major', ['clean', 'minify', 'bump:major', 'release', 'nugetpack', 'nugetpush']);
+    grunt.registerTask('publish:patch', ['clean', 'minify', 'bump:patch', 'release']);
+    grunt.registerTask('publish:minor', ['clean', 'minify', 'bump:minor', 'release']);
+    grunt.registerTask('publish:major', ['clean', 'minify', 'bump:major', 'release']);
 };
