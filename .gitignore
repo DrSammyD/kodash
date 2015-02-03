@@ -5,3 +5,4 @@ nuget/*.nupkg
 npm-debug.log
 /build/reports/coverage/lcov-report
 /bower_components
+/lib

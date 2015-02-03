@@ -1,10 +1,10 @@
-module.exports = function (grunt) {
+module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
 
         watch: {
-            files: ['javascripts/*.js','spec/*.js'],
-            tasks: ['karma:unit:run','jshint']
+            files: ['javascripts/*.js', 'spec/*.js'],
+            tasks: ['karma:unit:run', 'jshint']
         },
 
         nugetpack: {
@@ -22,17 +22,17 @@ module.exports = function (grunt) {
                 src: 'nuget/*.nupkg'
             }
         },
-        karma:{
+        karma: {
             continuous: {
                 configFile: 'karma.conf.js',
                 singleRun: true,
                 browsers: ['PhantomJS']
             },
-            unit:{
-                configFile:'karma.conf.js',
+            unit: {
+                configFile: 'karma.conf.js',
                 browsers: ['Chrome'],
-                preprocessors:null,
-                singleRun:false
+                preprocessors: null,
+                singleRun: false
             }
         },
         jshint: {
@@ -50,11 +50,11 @@ module.exports = function (grunt) {
                 // we'll use grunt-bump to increment the version as it
                 // supports reloading the pkg config var which we need
                 // as it is referenced when the nuget tasks are run
-                bump: false,    
+                bump: false,
                 commitMessage: 'Release <%= version %>'
-                /*github: { 
-                    repo: 'DrSammyD/kodash'
-                }*/
+                    /*github: { 
+                        repo: 'DrSammyD/kodash'
+                    }*/
             }
         },
 
@@ -67,7 +67,7 @@ module.exports = function (grunt) {
                 push: false
             }
         },
-        
+
         uglify: {
             my_target: {
                 options: {
@@ -77,6 +77,11 @@ module.exports = function (grunt) {
                 files: {
                     'javascripts/kodash.min.js': ['javascripts/kodash.js']
                 }
+            }
+        },
+        bower: {
+            install: {
+                //just run 'grunt bower:install' and you'll see files from your Bower packages in lib directory
             }
         }
     });
@@ -89,8 +94,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-release');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-bower-task');
 
-    grunt.registerTask('test', ['jshint', 'karma:continuous']);
+    grunt.registerTask('test', ['bower','jshint', 'karma:continuous']);
     grunt.registerTask('minify', ['uglify']);
     grunt.registerTask('default', ['test', 'minify']);
     grunt.registerTask('publish', ['publish:patch']);

@@ -32,5 +32,10 @@
     "dependencies": {
         "knockout": ">=2.3.0",
         "lodash": ">=2.4.0 <3.0.0"
+    },
+    "exportsOverride": {
+        "lodash": {
+            "": "**/*.js"
+        }
     }
 }
