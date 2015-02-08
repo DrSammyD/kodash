@@ -151,6 +151,8 @@
             while (func) {
                 var args = unwrapArgs(func['args']);
                 lodashCall = lodashCall[func['loFunc']].apply(lodashCall, args);
+                if(lodashCall.value)
+                    lodashCall=_(lodashCall.value());
                 func = func.children[resolveIndexFromPaths(path, func.root)];
             }
         }
@@ -206,6 +208,8 @@
                 if (funcIttr.loFunc === 'observe')
                     return lodashCall;
                 lodashCall = callLodashCall(funcIttr, lodashCall,outputObj);
+                if(lodashCall.value)
+                    lodashCall=_(lodashCall.value());
                 traverseTree(funcIttr, outputObj, lodashCall, outputObservable, create, remove);
 
                 _.each(remove, removeFunc);
@@ -240,6 +244,8 @@
                         }
                         var args = unwrapArgs(child['args']);
                         lodashCall = lodashCall[child['loFunc']].apply(lodashCall, args);
+                        if(lodashCall.value)
+                            lodashCall=_(lodashCall.value());
                         if (child.dep)
                             remove.push(child);
                         child['__output__'] = lodashCall;
@@ -296,6 +302,8 @@
                 }
                 var args = unwrapArgs(func['args']);
                 lodashCall = lodashCall[func['loFunc']].apply(lodashCall, args);
+                if(lodashCall.value)
+                    lodashCall=_(lodashCall.value());
                 func['__output__'] = lodashCall;
                 func.observed=1;
             }

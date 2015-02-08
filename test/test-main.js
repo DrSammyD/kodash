@@ -11,7 +11,7 @@ requirejs.config({
         'test-main':'./test/test-main',
         'kodash': './javascripts/kodash',
         'knockout': './bower_components/knockout/dist/knockout.debug',
-        'lodash': './bower_components/lodash/dist/lodash',
+        'lodash': './bower_components/lodash/lodash',
         'chai': 'node_modules/chai/chai'
     },
  
