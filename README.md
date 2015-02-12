@@ -59,4 +59,4 @@ z();
 One thing to note. Lodash unwraps it's lodashWrapper class on certain calls. If you expect lodash to do this for one of your calls, make sure that you chain it.
 
 
-Checkout this [jsfiddle](http://jsfiddle.net/FZek4/170/) for more intersting behavior
+Checkout this [site](http://drsammyd.github.io/#kodash) for more intersting behavior
